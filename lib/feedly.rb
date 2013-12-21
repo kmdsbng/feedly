@@ -4,6 +4,11 @@ require 'net/http'
 require 'json'
 
 class Feedly
+  class Error      < StandardError; end
+  class BadRequest < StandardError; end
+  class AuthError  < StandardError; end
+  class NotFound   < StandardError; end
+
   API_URL = 'http://sandbox.feedly.com/v3/'
   attr_reader :access_token
 
@@ -29,6 +34,30 @@ class Feedly
 
   def get_profile_url
     Feedly::API_URL + 'profile'
+    #argv.each do |k, v|
+    #  url << "#{k}=#{v}&"
+    #end
+    #JSON.parse(FeedlyApi.get(url, @auth_token), symbolize_names: true)
+  end
+
+  def get_preferences
+    url = get_preferences_url
+    uri = URI(url)
+    req = Net::HTTP::Get.new(uri.request_uri)
+
+      #req['$Authorization.feedly'] = '$FeedlyAuth'
+    req['Authorization'] = "OAuth #{self.access_token}"
+
+    response = Net::HTTP.start(uri.hostname, uri.port) do |http|
+      http.request(req)
+    end
+
+    handle_errors(response)
+    JSON.parse(response.body)
+  end
+
+  def get_preferences_url
+    Feedly::API_URL + 'preferences'
     #argv.each do |k, v|
     #  url << "#{k}=#{v}&"
     #end
