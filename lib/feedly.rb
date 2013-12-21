@@ -50,6 +50,10 @@ class Feedly
     api_get('topics')
   end
 
+  def get_tags
+    api_get('tags')
+  end
+
   def make_url(path)
     Feedly::API_URL + path
   end
