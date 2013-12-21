@@ -16,8 +16,8 @@ class Feedly
     @access_token = option[:access_token]
   end
 
-  def api_get(path)
-    url = make_url(path)
+  def api_get(path, argv={})
+    url = make_url(path, argv)
     uri = URI(url)
     req = Net::HTTP::Get.new(uri.request_uri)
     req['Authorization'] = "OAuth #{self.access_token}"
@@ -54,8 +54,16 @@ class Feedly
     api_get('tags')
   end
 
-  def make_url(path)
-    Feedly::API_URL + path
+  def get_search_feeds(q, n=20)
+    api_get('search/feeds', :q => q, :n => n)
+  end
+
+  def make_url(path, argv)
+    base_url = Feedly::API_URL + path
+    query = argv.map {|k, v|
+      "#{URI.encode_www_form_component(k)}=#{URI.encode_www_form_component(v)}"
+    }.join('&')
+    query.empty? ? base_url : base_url + '?' + query
   end
 
   def handle_errors(response)
