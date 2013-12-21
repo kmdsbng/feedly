@@ -16,7 +16,8 @@ class Feedly
     @access_token = option[:access_token]
   end
 
-  def api_get(url)
+  def api_get(path)
+    url = make_url(path)
     uri = URI(url)
     req = Net::HTTP::Get.new(uri.request_uri)
     req['Authorization'] = "OAuth #{self.access_token}"
@@ -30,11 +31,15 @@ class Feedly
   end
 
   def get_profile
-    api_get(make_url('profile'))
+    api_get('profile')
   end
 
   def get_preferences
-    api_get(make_url('preferences'))
+    api_get('preferences')
+  end
+
+  def get_categories
+    api_get('categories')
   end
 
   def make_url(path)
