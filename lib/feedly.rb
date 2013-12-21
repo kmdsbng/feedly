@@ -16,12 +16,9 @@ class Feedly
     @access_token = option[:access_token]
   end
 
-  def get_profile
-    url = get_profile_url
+  def api_get(url)
     uri = URI(url)
     req = Net::HTTP::Get.new(uri.request_uri)
-
-      #req['$Authorization.feedly'] = '$FeedlyAuth'
     req['Authorization'] = "OAuth #{self.access_token}"
 
     response = Net::HTTP.start(uri.hostname, uri.port) do |http|
@@ -32,36 +29,16 @@ class Feedly
     JSON.parse(response.body)
   end
 
-  def get_profile_url
-    Feedly::API_URL + 'profile'
-    #argv.each do |k, v|
-    #  url << "#{k}=#{v}&"
-    #end
-    #JSON.parse(FeedlyApi.get(url, @auth_token), symbolize_names: true)
+  def get_profile
+    api_get(make_url('profile'))
   end
 
   def get_preferences
-    url = get_preferences_url
-    uri = URI(url)
-    req = Net::HTTP::Get.new(uri.request_uri)
-
-      #req['$Authorization.feedly'] = '$FeedlyAuth'
-    req['Authorization'] = "OAuth #{self.access_token}"
-
-    response = Net::HTTP.start(uri.hostname, uri.port) do |http|
-      http.request(req)
-    end
-
-    handle_errors(response)
-    JSON.parse(response.body)
+    api_get(make_url('preferences'))
   end
 
-  def get_preferences_url
-    Feedly::API_URL + 'preferences'
-    #argv.each do |k, v|
-    #  url << "#{k}=#{v}&"
-    #end
-    #JSON.parse(FeedlyApi.get(url, @auth_token), symbolize_names: true)
+  def make_url(path)
+    Feedly::API_URL + path
   end
 
   def handle_errors(response)
