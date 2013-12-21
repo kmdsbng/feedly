@@ -42,6 +42,14 @@ class Feedly
     api_get('categories')
   end
 
+  def get_subscriptions
+    api_get('subscriptions')
+  end
+
+  def get_topics
+    api_get('topics')
+  end
+
   def make_url(path)
     Feedly::API_URL + path
   end
