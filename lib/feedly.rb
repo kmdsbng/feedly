@@ -13,7 +13,29 @@ class Feedly
   attr_reader :access_token
 
   def initialize(option)
+    @refresh_token = option[:refresh_token]
     @access_token = option[:access_token]
+    unless @access_token
+      get_access_token
+    end
+  end
+
+  def get_access_token
+    url = make_url('auth/token', {})
+    uri = URI(url)
+    req = Net::HTTP::Post.new(uri.request_uri)
+    req['Authorization'] = "OAuth #{self.access_token}"
+    req['Content-type'] = 'application/json'
+    #req.body = body.to_json
+    req.set_form_data({:refresh_token => @refresh_token, :client_id => 'sandbox', :client_secret => 'QNFQRFCFM1IQCJB367ON', :grant_type => 'refresh_token'})
+
+    response = Net::HTTP.start(uri.hostname, uri.port) do |http|
+      http.request(req)
+    end
+
+    handle_errors(response)
+    json = JSON.parse(response.body)
+    @access_token = json['access_token']
   end
 
   def api_get(path, argv={})
