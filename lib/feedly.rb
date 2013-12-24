@@ -46,6 +46,20 @@ class Feedly
     true
   end
 
+  def api_delete(path, argv={})
+    url = make_url(path, argv)
+    uri = URI(url)
+    req = Net::HTTP::Delete.new(uri.request_uri)
+    req['Authorization'] = "OAuth #{self.access_token}"
+
+    response = Net::HTTP.start(uri.hostname, uri.port) do |http|
+      http.request(req)
+    end
+
+    handle_errors(response)
+    true
+  end
+
   def get_profile
     api_get('profile')
   end
@@ -83,18 +97,7 @@ class Feedly
   end
 
   def delete_subscriptions(feed_id)
-    argv = {}
-    url = make_url('subscriptions/' + URI.encode_www_form_component(feed_id), argv)
-    uri = URI(url)
-    req = Net::HTTP::Delete.new(uri.request_uri)
-    req['Authorization'] = "OAuth #{self.access_token}"
-
-    response = Net::HTTP.start(uri.hostname, uri.port) do |http|
-      http.request(req)
-    end
-
-    handle_errors(response)
-    true
+    api_delete('subscriptions/' + URI.encode_www_form_component(feed_id))
   end
 
   def make_url(path, argv)
