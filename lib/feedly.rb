@@ -30,6 +30,22 @@ class Feedly
     JSON.parse(response.body)
   end
 
+  def api_post(path, body, argv={})
+    url = make_url(path, argv)
+    uri = URI(url)
+    req = Net::HTTP::Post.new(uri.request_uri)
+    req['Authorization'] = "OAuth #{self.access_token}"
+    req['Content-type'] = 'application/json'
+    req.body = body.to_json
+
+    response = Net::HTTP.start(uri.hostname, uri.port) do |http|
+      http.request(req)
+    end
+
+    handle_errors(response)
+    true
+  end
+
   def get_profile
     api_get('profile')
   end
@@ -63,23 +79,8 @@ class Feedly
   end
 
   def post_subscriptions(feed_id)
-    argv = {}
-    url = make_url('subscriptions', argv)
-    uri = URI(url)
-    req = Net::HTTP::Post.new(uri.request_uri)
-    req['Authorization'] = "OAuth #{self.access_token}"
-    req['Content-type'] = 'application/json'
-
-    req.body = {:id => feed_id}.to_json
-
-    response = Net::HTTP.start(uri.hostname, uri.port) do |http|
-      http.request(req)
-    end
-
-    handle_errors(response)
-    true
+    api_post('subscriptions', {:id => feed_id})
   end
-
 
   def delete_subscriptions(feed_id)
     argv = {}
