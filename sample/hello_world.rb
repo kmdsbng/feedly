@@ -5,9 +5,9 @@ def main
   access_token = ARGV[0]
   f = Feedly.new(:access_token => access_token)
   profile = f.get_profile
-  puts profile[:fullName] # MyName
-  puts profile[:client] # "Feedly sandbox client"
-  puts profile[:email] # "myaddress@gmail.com"
+  puts profile["fullName"] # MyName
+  puts profile["client"] # "Feedly sandbox client"
+  puts profile["email"] # "myaddress@example.com"
 end
 
 case $0
