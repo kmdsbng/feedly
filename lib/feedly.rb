@@ -1,4 +1,5 @@
 # -*- encoding: utf-8 -*-
+require "feedly/version"
 require 'uri'
 require 'net/http'
 require 'json'
