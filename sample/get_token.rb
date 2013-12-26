@@ -1,4 +1,5 @@
 # -*- encoding: utf-8 -*-
+require 'feedly'
 
 def main
   feedly = Feedly.new
@@ -6,11 +7,11 @@ def main
   puts feedly.auth_url
 
   puts '2. Please input code'
-  code = gets
+  code = gets.chomp
 
   token = feedly.get_token_by_code(code)
-  puts "access_token: " + token.access_token
-  puts "refresh_token: " + token.refresh_token
+  puts "access_token: " + token["access_token"]
+  puts "refresh_token: " + token["refresh_token"]
 end
 
 case $0
