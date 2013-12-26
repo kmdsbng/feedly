@@ -10,14 +10,23 @@ class Feedly
   class AuthError  < StandardError; end
   class NotFound   < StandardError; end
 
-  API_URL = 'http://sandbox.feedly.com/v3/'
+  #API_URL = 'http://sandbox.feedly.com/v3/'
   attr_reader :access_token
 
   def initialize(option)
     @refresh_token = option[:refresh_token]
     @access_token = option[:access_token]
-    unless @access_token
+    @sandbox = option[:sandbox]
+    if !@access_token && @refresh_token
       get_access_token
+    end
+  end
+
+  def api_root
+    if @sandbox
+      'http://sandbox.feedly.com'
+    else
+      'http://cloud.feedly.com'
     end
   end
 
@@ -124,7 +133,7 @@ class Feedly
   end
 
   def make_url(path, argv)
-    base_url = Feedly::API_URL + path
+    base_url = api_root + '/v3/' + path
     query = argv.map {|k, v|
       "#{URI.encode_www_form_component(k)}=#{URI.encode_www_form_component(v)}"
     }.join('&')
