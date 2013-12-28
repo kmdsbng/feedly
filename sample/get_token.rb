@@ -13,7 +13,7 @@ def main
   token = feedly.get_token_by_code(code)
   puts "OK. success to get tokens"
   puts "access_token: " + token["access_token"]
-  puts "refresh_token: " + token["refresh_token"]
+  #puts "refresh_token: " + token["refresh_token"]
 end
 
 case $0
