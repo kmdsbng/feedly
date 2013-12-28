@@ -215,6 +215,14 @@ class Feedly
     api_delete('subscriptions/' + URI.encode_www_form_component(feed_id))
   end
 
+  def post_topics(param)
+    api_post('topics', param)
+  end
+
+  def delete_topics(topic_id)
+    api_delete('topics/' + URI.encode_www_form_component(topic_id))
+  end
+
   def make_url(path, argv)
     base_url = api_root + '/v3/' + path
     query = argv.map {|k, v|
@@ -228,12 +236,12 @@ class Feedly
 
     case response.code.to_i
     when 200 then response.body
-    when 401 then raise AuthError
-    when 403 then raise AuthError
-    when 404 then raise NotFound
-    when 500 then raise Error
+    when 401 then raise AuthError, response.body
+    when 403 then raise AuthError, response.body
+    when 404 then raise NotFound, response.body
+    when 500 then raise Error, response.body
     else
-      raise Error
+      raise Error, response.body
     end
   end
 end
