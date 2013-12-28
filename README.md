@@ -1,6 +1,7 @@
 # Feedly
 
-TODO: Write a gem description
+This gem can access to Feely Cloud API.
+Supports GETS, POSTS, AUTH apis.
 
 ## Installation
 
